@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172554">
+<title>Cubra 12 Digital | Preparação e Professor</title>
+<style>
+:root{--navy:#172554;--blue:#2563eb;--sky:#dbeafe;--ink:#172033;--muted:#64748b;--line:#dbe2ee;--paper:#f5f7fb;--white:#fff;--green:#15803d;--red:#b91c1c;--gold:#b45309}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:1000px;margin:auto;padding:22px 16px 40px}.hero{background:linear-gradient(135deg,#172554,#1d4ed8);color:white;border-radius:22px;padding:25px;margin-bottom:18px;box-shadow:0 12px 30px #17255422}
+.kicker{font-size:.76rem;letter-spacing:.13em;text-transform:uppercase;opacity:.8;font-weight:700}.hero h1{font-size:clamp(2rem,6vw,3.2rem);margin:7px 0}.hero p{margin:0;max-width:650px;line-height:1.55;color:#dbeafe}
+.card{background:var(--white);border:1px solid var(--line);border-radius:17px;padding:18px;margin:14px 0;box-shadow:0 4px 15px #17255408}
+h2{font-size:1.12rem;margin:0 0 13px}.muted{color:var(--muted)}.small{font-size:.85rem}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+label{display:block;font-size:.88rem;font-weight:650;color:#334155}input,select{display:block;width:100%;margin-top:6px;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;background:white;color:var(--ink);font:inherit}
+.field{flex:1 1 180px;min-width:0}
+button{border:0;border-radius:11px;padding:12px 16px;font:inherit;font-weight:750;cursor:pointer;transition:.15s}
+button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:white}.primary:hover{background:#1d4ed8}.secondary{background:#eaf0fb;color:#1e3a8a}.ghost{background:white;border:1px solid var(--line);color:#334155}.danger{background:#fee2e2;color:#991b1b}
+.board-wrap{display:grid;grid-template-columns:1fr;gap:15px}.team-board{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfdff}.team-title{display:flex;justify-content:space-between;gap:8px;align-items:center;font-weight:800;margin-bottom:10px}.numbers{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px}.number{padding:12px 2px;border:1px solid #cbd5e1;background:white;border-radius:8px;text-align:center;font-weight:850;font-size:clamp(.75rem,2.2vw,1rem);color:#1e293b}.number.covered{background:#e2e8f0;color:#94a3b8;text-decoration:line-through;border-color:#cbd5e1}
+.play-area{background:#f8fbff;border:1px dashed #93c5fd;border-radius:15px;padding:16px;text-align:center}.dice{display:flex;justify-content:center;gap:12px;margin:12px}.die{width:65px;height:65px;display:grid;place-items:center;border:1px solid #cbd5e1;border-radius:14px;background:white;font-size:2.3rem;box-shadow:0 3px 8px #0f172a0c}
+.question{font-size:clamp(1.35rem,4vw,2rem);font-weight:850;margin:10px 0;color:#172554;overflow-wrap:anywhere}.topic{display:inline-block;background:#dbeafe;color:#1e40af;border-radius:99px;padding:5px 10px;font-size:.75rem;font-weight:800}
+.feedback{padding:11px;border-radius:10px;background:#f1f5f9;min-height:44px;line-height:1.45}.feedback.good{background:#dcfce7;color:#166534}.feedback.bad{background:#fee2e2;color:#991b1b}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:13px}.stat strong{display:block;font-size:1.7rem;color:#1e3a8a}.stat span{display:block;margin-top:6px;line-height:1.45}.notice{background:#fffbeb;border:1px solid #fde68a;color:#854d0e;padding:12px;border-radius:12px;font-size:.88rem;line-height:1.5}
+.rules li{margin:7px 0;line-height:1.45}.hidden{display:none!important}
+details summary{padding:8px 0}#allQuestionsTable th{background:#f8fafc;padding:8px;border-bottom:1px solid #dbe2ee}footer{text-align:center;color:var(--muted);font-size:.78rem;padding:18px}
+@media(min-width:760px){.board-wrap{grid-template-columns:1fr 1fr}.team-board:first-child{grid-column:1/-1}.team-board:last-child{grid-column:1/-1}.numbers{gap:7px}.number{padding:14px 3px}}
+@media(max-width:430px){main{padding:12px 10px 28px}.hero{padding:20px 17px}.card{padding:14px}.number{padding:10px 0}.die{width:56px;height:56px}}
+
+/* Projeção, responsividade e acessibilidade */
+button{min-height:44px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.number{font-size:clamp(1rem,2.8vw,1.55rem);padding:15px 3px}
+.question{font-size:clamp(1.8rem,5.2vw,3.4rem);line-height:1.2}
+#clockDisplay{font-size:clamp(2rem,6vw,3rem)!important}
+#teacherStopwatch:fullscreen{background:white;padding:30px;display:flex;flex-direction:column;justify-content:center}
+#presentationStage:fullscreen{background:#fff;padding:12px;overflow:auto}
+#presentationExit{display:none;position:fixed;right:12px;top:12px;z-index:9999}
+body.presentation{background:#fff}
+body.presentation main{max-width:none;padding:8px}
+body.presentation #hero,body.presentation #setup,body.presentation #teacherStopwatch,
+body.presentation #scoreSection,body.presentation #teacherPanel,body.presentation .teacher-only,
+body.presentation footer{display:none!important}
+body.presentation #presentationStage{display:grid;grid-template-columns:1fr;gap:8px}
+body.presentation #presentationStage>.card{margin:0;padding:clamp(8px,2vw,22px);box-shadow:none;border:2px solid #cbd5e1}
+body.presentation #presentationStage h2{font-size:clamp(1.25rem,3vw,2rem)}
+body.presentation .number{font-size:clamp(1.4rem,4vw,2.5rem);padding:clamp(10px,2vw,22px)}
+body.presentation .question{font-size:clamp(2rem,7vw,4.5rem);color:#10245b}
+body.presentation .play-area{background:#fff;border:0}
+body.presentation #presentationExit{display:block}
+body.no-animations *,body.no-animations *:before,body.no-animations *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.live-history-item{border-bottom:1px solid #e2e8f0;padding:8px 0}
+.live-history-item.used{text-decoration:line-through;color:#94a3b8}
+.live-bank-item{display:flex;gap:8px;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:7px 0;flex-wrap:wrap}
+.live-bank-item.used{color:#94a3b8;text-decoration:line-through}
+.sync-pill{display:inline-block;border-radius:99px;padding:4px 8px;background:#dcfce7;color:#166534;font-weight:800}
+
+@media(max-width:600px){.numbers{grid-template-columns:repeat(6,minmax(0,1fr))}.number{padding:12px 2px}.stats{grid-template-columns:1fr 1fr}}
+
+
+.page-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+ background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 16px;
+ font-size:.9rem;font-weight:700;color:#334155}
+.page-nav a{color:#1d4ed8;text-decoration:none}
+.page-nav a:hover{text-decoration:underline}
+body.page-one #teacherStopwatch,
+body.page-one #presentationStage,
+body.page-one #scoreSection,
+body.page-one #rulesSection{display:none!important}
+body.page-two #setup,
+body.page-two .teacher-only,
+body.page-two #teacherPanel{display:none!important}
+
+</style>
+</head>
+<body class="page-one">
+<main>
+
+<header class="hero" id="hero">
+ <div class="kicker">Jogo pedagógico • Desafio matemático</div>
+ <h1>🎲 Cubra 12 Digital</h1>
+ <p>Um desafio de raciocínio lógico e cálculo matemático. Duas equipes, doze números e uma sequência de desafios para chegar à grande final!</p>
+</header>
+
+<nav class="page-nav" aria-label="Navegação entre arquivos">
+ <span>Preparação e professor</span>
+ <a href="cubra12_arquivo2.html">Ir para a partida →</a>
+</nav>
+
+<section class="card" id="setup">
+ <h2>⚙️ Preparar a partida</h2>
+ <div class="row">
+  <div class="field"><label for="players">Participantes em cada equipe</label><input id="players" type="number" min="2" max="60" value="6"></div>
+  <div class="field"><label for="seconds">Tempo de resolução (segundos; 0 = sem limite)</label><input id="seconds" type="number" min="0" max="600" value="30"></div>
+ </div>
+ <div class="row" style="margin-top:12px">
+  <div class="field"><label for="difficulty">Dificuldade</label><select id="difficulty"><option value="facil">Fácil</option><option value="intermediario" selected>Intermediário</option><option value="avancado">Avançado</option><option value="misto">Misto / personalizado</option></select></div>
+  <div class="field"><label for="topicMode">Escolha dos conteúdos</label><select id="topicMode"><option value="random">Sortear entre os selecionados</option><option value="manual">Escolher a cada rodada</option></select></div>
+ </div>
+ <div style="margin-top:12px"><strong class="small">Conteúdos da partida</strong><div class="row" id="topicChecks" style="gap:8px 14px;margin-top:8px">
+  <label><input type="checkbox" class="topic-check" value="Adição" checked style="display:inline;width:auto"> Adição</label><label><input type="checkbox" class="topic-check" value="Subtração" checked style="display:inline;width:auto"> Subtração</label><label><input type="checkbox" class="topic-check" value="Multiplicação" checked style="display:inline;width:auto"> Multiplicação</label><label><input type="checkbox" class="topic-check" value="Divisão" checked style="display:inline;width:auto"> Divisão</label><label><input type="checkbox" class="topic-check" value="Frações" checked style="display:inline;width:auto"> Frações</label><label><input type="checkbox" class="topic-check" value="Potenciação" checked style="display:inline;width:auto"> Potenciação</label><label><input type="checkbox" class="topic-check" value="Radiciação" checked style="display:inline;width:auto"> Radiciação</label><label><input type="checkbox" class="topic-check" value="Expressões numéricas" checked style="display:inline;width:auto"> Expressões numéricas</label><label><input type="checkbox" class="topic-check" value="Equações do 1º grau" checked style="display:inline;width:auto"> Equações do 1º grau</label><label><input type="checkbox" class="topic-check" value="Equações com frações" checked style="display:inline;width:auto"> Equações com frações</label><label><input type="checkbox" class="topic-check" value="Equações com mais de uma operação" checked style="display:inline;width:auto"> Equações com mais de uma operação</label>
+ </div></div>
+  <div class="row" style="margin-top:12px"><label><input type="checkbox" id="keepTeam" style="display:inline;width:auto"> Manter a mesma equipe nas próximas rodadas</label></div>
+ <button class="primary" id="start" style="margin-top:12px">Iniciar partida</button>
+</section>
+
+<section class="card" id="teacherStopwatch" style="position:relative">
+ <div class="row between">
+  <div><h2 style="margin-bottom:4px">⏱️ Cronômetro livre do professor</h2><p class="small muted" style="margin:0">Uso independente — especialmente para a grande final. Não interfere no tempo de resolução.</p></div>
+  <strong id="clockDisplay" style="font-size:clamp(1.7rem,5vw,2.3rem);font-variant-numeric:tabular-nums">00:00</strong>
+ </div>
+ <div class="row" style="margin-top:12px">
+  <button class="primary" id="clockStart" type="button">Iniciar</button>
+  <button class="secondary" id="clockPause" type="button">Pausar</button>
+  <button class="secondary" id="clockResume" type="button">Retomar</button>
+  <button class="ghost" id="clockReset" type="button">Zerar</button>
+ </div>
+</section>
+
+<div id="presentationStage">
+<button id="presentationExit" class="primary" type="button">Sair da apresentação</button>
+<section class="card">
+ <div class="row between"><h2>🧩 Tabuleiro</h2><span class="small muted" id="roundLabel">Partida não iniciada</span></div>
+ <div class="board-wrap">
+  <div class="team-board">
+   <div class="team-title"><span>🔵 EQUIPE A</span><span class="small muted" id="aRemaining">—</span></div>
+   <div class="numbers" id="boardA"></div>
+  </div>
+  <div class="team-board">
+   <div class="team-title"><span>🔴 EQUIPE B</span><span class="small muted" id="bRemaining">—</span></div>
+   <div class="numbers" id="boardB"></div>
+  </div>
+ </div>
+</section>
+
+<section class="card" id="game">
+ <div class="row between"><h2>🎯 Desafio da rodada</h2><strong id="turnLabel">Aguardando início</strong></div>
+ <div class="play-area">
+  <div class="dice"><div class="die" id="die1">⚀</div><div class="die" id="die2">⚁</div></div>
+  <div class="field" id="manualTopicWrap" style="max-width:330px;margin:10px auto;display:none"><label for="manualTopic">Conteúdo desta rodada</label><select id="manualTopic"></select></div>
+  <div class="row" style="justify-content:center;margin:10px auto 6px;max-width:760px">
+   <div class="field"><label for="manualSearch">🔎 Pesquisar desafio por texto</label><input id="manualSearch" type="search" placeholder="Digite parte do enunciado, conteúdo ou resultado"></div>
+   <div class="field" style="max-width:240px"><label for="manualSort">Ordenar por nível</label><select id="manualSort"><option value="nivel-asc">Fácil → Intermediário → Avançado</option><option value="nivel-desc">Avançado → Intermediário → Fácil</option><option value="resultado">Resultado 1 → 12</option><option value="texto">Texto A → Z</option></select></div>
+  </div>
+  <div class="row" style="justify-content:center;margin:6px auto 10px;max-width:760px">
+   <div class="field"><label for="manualQuestion">Escolha manual do professor (questões inéditas e resultados disponíveis)</label><select id="manualQuestion"><option value="">Seleção automática</option></select></div>
+   <button class="secondary" id="manualDraw" type="button" disabled>Apresentar questão escolhida</button>
+  </div>
+  <div class="row" style="justify-content:center">
+    <button class="primary" id="draw" disabled>Sortear desafio automaticamente</button>
+    <button class="ghost" id="skipChallenge" type="button" disabled>⏭ Pular desafio</button>
+   </div>
+  <div style="margin-top:15px"><span class="topic" id="topic">CONTEÚDO MATEMÁTICO</span></div>
+  <div class="question" id="question">Inicie a partida para começar.</div>
+  <p class="small muted" id="questionHint">Resolva o desafio e informe o resultado.</p>
+  <div class="field" style="max-width:330px;margin:12px auto">
+   <label for="answer">Resposta do participante</label>
+   <input id="answer" type="number" step="any" inputmode="decimal" placeholder="Digite o resultado" disabled>
+  </div>
+  <div class="row" style="justify-content:center">
+   <button class="primary" id="check" disabled>Conferir resposta</button>
+   <button class="secondary" id="next" disabled>Próxima equipe</button>
+  </div>
+  <div class="feedback" id="feedback" role="status" aria-live="polite" style="margin-top:12px">O professor pode projetar esta tela para toda a turma.</div>
+  <div class="small muted" id="timer" style="margin-top:8px"></div>
+   <label style="margin-top:8px"><input type="checkbox" id="autoTimeout" checked style="display:inline;width:auto"> Aplicar eliminação automaticamente ao terminar o tempo</label>
+ </div>
+</section>
+</div>
+
+<section class="card" id="scoreSection">
+ <h2>🏆 Placar</h2>
+ <div class="stats">
+  <div class="stat"><span class="small muted">Equipe A • participantes ativos</span><strong id="scoreA">0</strong><span class="small muted" id="outA">Eliminados: 0</span><span class="small muted" id="hitsA">Acertos: 0</span><span class="small muted" id="advA">Vantagem: 0</span></div>
+  <div class="stat"><span class="small muted">Equipe B • participantes ativos</span><strong id="scoreB">0</strong><span class="small muted" id="outB">Eliminados: 0</span><span class="small muted" id="hitsB">Acertos: 0</span><span class="small muted" id="advB">Vantagem: 0</span></div>
+ </div>
+ <p id="winner" style="font-weight:850;font-size:1.1rem;margin-bottom:0"></p>
+</section>
+
+<div class="row teacher-only" style="justify-content:flex-end"><button class="secondary" id="teacherToggle" type="button">🔒 Área exclusiva do professor</button></div><section class="card hidden" id="teacherPanel">
+ <h2>👩‍🏫 Área do professor — banco de questões</h2>
+<p class="small muted">Cadastre questões sem alterar o código. Elas ficam salvas neste navegador, mesmo após fechá-lo.</p>
+ <div class="row"><div class="field"><label for="customQuestion">Enunciado / expressão / equação</label><input id="customQuestion" placeholder="Ex.: 2(x + 3) − 4 = 10"></div><div class="field"><label for="customAnswer">Resposta correta (inteiro de 1 a 12)</label><input id="customAnswer" type="number" min="1" max="12" step="1"></div></div>
+ <div class="row" style="margin-top:10px"><div class="field"><label for="customTopic">Conteúdo / operação</label><select id="customTopic"><option>Adição</option><option>Subtração</option><option>Multiplicação</option><option>Divisão</option><option>Frações</option><option>Potenciação</option><option>Radiciação</option><option>Expressões numéricas</option><option>Equações do 1º grau</option><option>Equações com frações</option><option>Equações com mais de uma operação</option></select></div><div class="field"><label for="customDifficulty">Dificuldade</label><select id="customDifficulty"><option value="facil">Fácil</option><option value="intermediario">Intermediário</option><option value="avancado">Avançado</option></select></div></div>
+ <div class="row" style="margin-top:10px"><button class="primary" id="saveQuestion">Salvar questão</button><button class="ghost" id="cancelEdit" style="display:none">Cancelar edição</button><span class="small muted" id="saveStatus" aria-live="polite"></span></div>
+ <div class="row between" style="margin-top:18px"><strong>Questões cadastradas</strong><span class="small muted" id="customCount">0 questões</span></div><div id="customList" class="small" style="margin-top:8px"></div>
+  <details style="margin-top:16px"><summary style="cursor:pointer;font-weight:800">♻️ Questões retiradas da partida — restaurar</summary><div id="removedList" class="small muted" style="margin-top:8px">Nenhuma questão retirada.</div></details>
+   
+  <details style="margin-top:16px"><summary style="cursor:pointer;font-weight:800">📊 Estatísticas reais do banco de questões</summary><div id="bankStats" style="overflow-x:auto"></div></details>
+  <details style="margin-top:16px"><summary style="cursor:pointer;font-weight:800">📚 Visualizar todas as expressões e respostas</summary><p class="small muted">Banco original e questões cadastradas pelo professor.</p><div style="overflow-x:auto"><table id="allQuestionsTable" style="width:100%;border-collapse:collapse;font-size:.88rem"><thead><tr><th style="text-align:left;padding:8px">Expressão / enunciado</th><th>Resposta</th><th>Conteúdo</th><th>Nível</th><th>Ação</th></tr></thead><tbody></tbody></table></div></details>
+</section>
+
+<section class="card" id="liveMonitor">
+ <div class="row between">
+  <div>
+   <h2>🔄 Acompanhamento em tempo real</h2>
+   <p class="small muted" style="margin:0">Esta área acompanha a partida em tempo real. Os desafios já apresentados ficam riscados e entram no histórico.</p>
+  </div>
+  <span class="small muted" id="syncStatus">Aguardando partida...</span>
+ </div>
+ <div class="stats" style="margin-top:12px">
+  <div class="stat"><span class="small muted">Equipe A</span><strong id="liveScoreA">0</strong><span class="small muted" id="liveOutA">Eliminados: 0</span></div>
+  <div class="stat"><span class="small muted">Equipe B</span><strong id="liveScoreB">0</strong><span class="small muted" id="liveOutB">Eliminados: 0</span></div>
+ </div>
+ <div class="notice" style="margin-top:12px" id="liveCurrent">Nenhuma partida ativa.</div>
+ <div class="notice" style="margin-top:8px" id="liveAnswer"><strong>Resposta do desafio atual:</strong> —</div>
+ <details style="margin-top:12px" open>
+  <summary style="cursor:pointer;font-weight:800">📜 Histórico dos desafios que já saíram</summary>
+  <div id="liveHistory" class="small" style="margin-top:8px"></div>
+ </details>
+ 
+</section>
+
+<section class="card" id="rulesSection">
+ <h2>📘 Regras sugeridas</h2>
+ <ol class="rules">
+<li>A turma será dividida em duas equipes, escolhidas por dois líderes que selecionarão os participantes alternadamente.</li>
+<li>Após a formação das equipes, o sistema sorteará a ordem de participação de cada grupo.</li>
+<li>As equipes jogarão alternadamente. Após participar, o aluno que não for eliminado irá para o final da fila de sua equipe.</li>
+<li>O participante deverá resolver o desafio numérico sorteado dentro do tempo estabelecido pelo professor, sem ajuda dos colegas.</li>
+<li>Se acertar, o número correspondente à resposta será preenchido no tabuleiro de sua equipe.</li>
+<li>Se errar ou ultrapassar o tempo, o participante será eliminado, e o mesmo desafio será repassado uma única vez à equipe adversária.</li>
+<li>A equipe que receber o repasse não será penalizada caso erre. Após responder, receberá um novo desafio numérico para continuar sua vez.</li>
+<li>O sistema deverá apresentar apenas desafios cujos resultados correspondam a números ainda disponíveis no tabuleiro da equipe. Se o número já estiver preenchido no tabuleiro da equipe que recebeu o repasse, ela ganhará um ponto de vantagem, registrado pelo professor.</li>
+<li>Os desafios numéricos não poderão se repetir e deverão priorizar os resultados que ainda faltam no tabuleiro de cada equipe.</li>
+<li>Quando restar apenas um participante em cada equipe, será iniciada a final, com desafios de maior dificuldade e resultados correspondentes aos números ainda disponíveis.</li>
+<li>Se faltar apenas um número em cada tabuleiro, os participantes deverão criar um desafio numérico cuja resolução tenha como resultado o número restante, dentro do tempo definido pelo professor.</li>
+<li>Vencerá a equipe ou o participante que completar primeiro o seu tabuleiro, conforme a etapa da partida.</li>
+</ol>
+ <div class="notice"><strong>Orientação ao professor:</strong> combine antes da partida se a eliminação será aplicada apenas ao participante da vez ou se haverá alguma regra de recuperação. O jogo é uma proposta de revisão; adapte os desafios aos conteúdos efetivamente trabalhados em sala.</div>
+</section>
+<footer>Cubra 12 Digital • Recurso didático para uso em sala de aula</footer>
+</main>
+<script>
+(()=>{
+ const $=id=>document.getElementById(id), STORAGE='cubra12_custom_questions_v2', REMOVED='cubra12_removed_questions_v1', DELETED='cubra12_deleted_questions_v1', SESSION='cubra12_game_session_v2';
+ const levels={facil:'Fácil',intermediario:'Intermediário',avancado:'Avançado'};
+ const base=[
+ ['Adição','8 + 4',12,'facil'],['Adição','7 + 5',12,'facil'],['Adição','6 + 3',9,'facil'],['Adição','4 + 7',11,'facil'],['Adição','5 + 2 + 3',10,'intermediario'],['Subtração','15 − 7',8,'facil'],['Subtração','20 − 9',11,'facil'],['Subtração','18 − 6 − 3',9,'intermediario'],['Subtração','30 − (8 + 10)',12,'intermediario'],
+ ['Multiplicação','3 × 4',12,'facil'],['Multiplicação','5 × 2',10,'facil'],['Multiplicação','2 × 3 × 2',12,'intermediario'],['Multiplicação','(−3) × (−2) + 1',7,'avancado'],['Divisão','36 ÷ 4',9,'facil'],['Divisão','18 ÷ 3',6,'facil'],['Divisão','48 ÷ (2 × 3)',8,'intermediario'],['Divisão','72 ÷ 3 ÷ 2',12,'intermediario'],
+ ['Frações','1/2 + 1/2',1,'facil'],['Frações','3/4 + 1/4',1,'facil'],['Frações','(3/2) × 4',6,'intermediario'],['Frações','(3/4) ÷ (1/4)',3,'intermediario'],['Frações','(5/2) + (3/2)',4,'intermediario'],['Frações','(7/3) × 3',7,'intermediario'],['Frações','(9/2) ÷ (3/2)',3,'avancado'],['Frações','2/5 de 20',8,'intermediario'],
+ ['Potenciação','2³',8,'facil'],['Potenciação','3²',9,'facil'],['Potenciação','2² + 1',5,'intermediario'],['Potenciação','3² − 5',4,'intermediario'],['Potenciação','2⁴ − 4',12,'avancado'],['Potenciação','2³ + 2²',12,'avancado'],['Radiciação','√49',7,'facil'],['Radiciação','√144',12,'facil'],['Radiciação','√64 + 2',10,'intermediario'],['Radiciação','√81 ÷ 3',3,'intermediario'],['Radiciação','√36 + √4',8,'avancado'],
+ ['Expressões numéricas','2 × (3 + 2)',10,'facil'],['Expressões numéricas','18 ÷ (3 + 3)',3,'intermediario'],['Expressões numéricas','7 + 2 × 2',11,'intermediario'],['Expressões numéricas','(12 − 4) ÷ 2',4,'facil'],['Expressões numéricas','20 − 3 × 4',8,'intermediario'],['Expressões numéricas','(5 + 7) ÷ 2',6,'intermediario'],['Expressões numéricas','30 ÷ 5 + 4',10,'intermediario'],['Expressões numéricas','2² + √64 ÷ 2',8,'avancado'],['Expressões numéricas','(3 + 1)² − 4',12,'avancado'],['Expressões numéricas','24 ÷ [2 × (3 − 1)]',6,'avancado'],
+ ['Equações do 1º grau','2x + 3 = 11  (x = ?)',4,'facil'],['Equações do 1º grau','3x − 2 = 10  (x = ?)',4,'facil'],['Equações do 1º grau','x/2 + 3 = 8  (x = ?)',10,'intermediario'],['Equações do 1º grau','5x = 35  (x = ?)',7,'facil'],['Equações do 1º grau','2x − 5 = 9  (x = ?)',7,'intermediario'],['Equações do 1º grau','x + 8 = 15  (x = ?)',7,'facil'],
+ ['Equações com frações','x/3 + 2 = 6  (x = ?)',12,'intermediario'],['Equações com frações','(x − 2)/2 = 3  (x = ?)',8,'intermediario'],['Equações com frações','x/4 + 1 = 3  (x = ?)',8,'avancado'],['Equações com frações','(x + 1)/3 = 2  (x = ?)',5,'avancado'],
+ ['Equações com mais de uma operação','2(x + 1) − 4 = 10  (x = ?)',6,'avancado'],['Equações com mais de uma operação','3(x − 2) + 1 = 10  (x = ?)',5,'avancado'],['Equações com mais de uma operação','2x + 3 − 5 = 10  (x = ?)',6,'intermediario'],['Equações com mais de uma operação','4(x − 1) = 32  (x = ?)',9,'avancado']
+ ].map((q,i)=>({id:'base-'+i,topic:q[0],text:q[1],answer:q[2],difficulty:q[3]}));
+ const generated=[];
+ // 12 questões inéditas por resultado: operações, expressões, frações e equações.
+ for(let n=1;n<=12;n++){
+  const items=[
+   ['Adição',`${n} + 0`,n,'facil'],
+   ['Subtração',`${n+5} − 5`,n,'facil'],
+   ['Multiplicação',`${n} × 2 ÷ 2`,n,'intermediario'],
+   ['Divisão',`${n*3} ÷ 3`,n,'facil'],
+   ['Frações',`${n*2}/2 + 0`,n,'intermediario'],
+   ['Potenciação',`(${n})² ÷ ${n}`,n,'avancado'],
+   ['Radiciação',`√${n*n}`,n,'intermediario'],
+   ['Expressões numéricas',`(${n+4} × 2 − 8) ÷ 2`,n,'intermediario'],
+   ['Equações do 1º grau',`x + ${n} = ${2*n}  (x = ?)`,n,'intermediario'],
+   ['Equações com frações',`x/2 + ${n/2} = ${n}  (x = ?)`,n,'avancado'],
+   ['Equações com mais de uma operação',`3(x − ${n}) + ${3*n} = ${3*n}  (x = ?)`,n,'avancado'],
+   ['Expressões numéricas',`(${n} × 3) + ${n} − (${n} × 3)`,n,'avancado']
+  ];
+  items.forEach((q,j)=>generated.push({id:`extra-${n}-${j}`,topic:q[0],text:q[1],answer:q[2],difficulty:q[3]}));
+ }
+ function read(k,fb){try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:fb}catch(e){return fb}}
+ let custom=read(STORAGE,[]),deleted=new Set(read(DELETED,[])),removed=[],editId=null,state=null,current=null,used=new Set(),owner=null,passed=false,continueTeam=false;
+ let resolutionTimer=null,choiceTimer=null,clockTimer=null,clockSeconds=0,left=0,pool=[],chosen=[];
+ let syncChannel=null;
+ try{syncChannel=new BroadcastChannel('cubra12_live_sync_v1')}catch(e){syncChannel=null}
+ const SYNC_KEY='cubra12_game_session_v2';
+
+ const all=()=>base.concat(generated,custom).filter(q=>!deleted.has(q.id)&&!removed.includes(q.id));
+ const norm=s=>String(s).trim().toLocaleLowerCase('pt-BR').replace(/\s+/g,' ');
+ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const saveCustom=()=>{
+  localStorage.setItem(STORAGE,JSON.stringify(custom));
+  localStorage.setItem(DELETED,JSON.stringify([...deleted]));
+  try{if(syncChannel)syncChannel.postMessage({type:'cubra12-custom-sync',custom,deleted:[...deleted]})}catch(e){}
+};
+  function saveSession(){
+  try{
+    const payload={state,current,used:[...used],removed,deleted:[...deleted],owner,passed,continueTeam,chosen,
+      seconds:$('seconds').value,players:$('players').value,difficulty:$('difficulty').value,
+      topics:[...document.querySelectorAll('.topic-check')].map(x=>[x.value,x.checked])};
+    localStorage.setItem(SESSION,JSON.stringify(payload));
+    if(syncChannel)syncChannel.postMessage({type:'cubra12-sync',payload});
+    renderLiveMonitor();
+  }catch(e){}
+}
+function applySyncedSession(payload){
+  if(!payload)return;
+  try{
+    state=payload.state||null; current=payload.current||null; used=new Set(payload.used||[]);
+    removed=payload.removed||[]; deleted=new Set(payload.deleted||[...deleted]); owner=payload.owner; passed=!!payload.passed;
+    continueTeam=!!payload.continueTeam; chosen=payload.chosen||[];
+    if(payload.seconds!==undefined)$('seconds').value=payload.seconds;
+    if(payload.players!==undefined)$('players').value=payload.players;
+    if(payload.difficulty)$('difficulty').value=payload.difficulty;
+    (payload.topics||[]).forEach(([v,c])=>{const el=[...document.querySelectorAll('.topic-check')].find(z=>z.value===v);if(el)el.checked=c});
+    pool=all().filter(q=>chosen.includes(q.topic));
+    render(); renderTeacher(); renderLiveMonitor(); refreshQuestionChoices();
+    if(current){
+      $('question').textContent=current.text;$('topic').textContent=current.topic.toUpperCase();
+      $('answer').disabled=false;$('check').disabled=false;$('draw').disabled=true;$('manualDraw').disabled=true;
+      $('teacherAnswer').textContent='Resposta correta: '+current.answer;$('teacherAnswer').classList.remove('hidden');
+      $('feedback').textContent='Partida sincronizada em tempo real.';
+    }else if(state&&state.active){
+      $('draw').disabled=false;$('check').disabled=true;$('answer').disabled=true;
+    }else{
+      $('draw').disabled=true;$('check').disabled=true;$('answer').disabled=true;
+    }
+  }catch(e){}
+}
+function renderLiveMonitor(){
+  const el=$('liveMonitor'); if(!el)return;
+  const active=!!(state&&state.active);
+  $('syncStatus').innerHTML=active?'<span class="sync-pill">● Sincronizado</span>':'Aguardando partida...';
+  $('liveScoreA').textContent=state?state.remaining[0]:0;
+  $('liveScoreB').textContent=state?state.remaining[1]:0;
+  $('liveOutA').textContent='Eliminados: '+(state?state.out[0]:0);
+  $('liveOutB').textContent='Eliminados: '+(state?state.out[1]:0);
+  if(current){
+    $('liveCurrent').innerHTML='<strong>Desafio atual:</strong> '+esc(current.text)+' <span class="muted">• '+esc(current.topic)+' • resultado '+current.answer+' • Equipe '+(state.team?'B':'A')+'</span>';
+    if($('liveAnswer'))$('liveAnswer').innerHTML='<strong>Resposta do desafio atual:</strong> '+esc(current.answer);
+  }else if(active){
+    $('liveCurrent').textContent='Partida ativa. Aguardando o próximo desafio.';
+    if($('liveAnswer'))$('liveAnswer').innerHTML='<strong>Resposta do desafio atual:</strong> —';
+  }else{
+    $('liveCurrent').textContent='Nenhuma partida ativa.';
+    if($('liveAnswer'))$('liveAnswer').innerHTML='<strong>Resposta do desafio atual:</strong> —';
+  }
+  const hist=(state&&state.challengeHistory)||[];
+  $('liveHistory').innerHTML=hist.length?hist.slice().reverse().map(h=>{
+    const status=h.status||'apresentado';
+    return `<div class="live-history-item ${status==='utilizado'||status==='pulada'?'used':''}"><b>Rodada ${h.round||'-'} • Equipe ${h.team?'B':'A'}</b> — ${esc(h.text)} <span class="muted">• ${esc(h.topic)} • resultado ${h.answer} • ${esc(status)}</span></div>`;
+  }).join(''):'<p class="muted">Nenhum desafio saiu ainda.</p>';
+  const bank=all();
+  $('liveChallengeBank').innerHTML=bank.map(q=>{
+    const isUsed=used.has(q.id);
+    return `<div class="live-bank-item ${isUsed?'used':''}"><span><b>${esc(q.text)}</b> = ${q.answer} <span class="muted">• ${esc(q.topic)} • ${levels[q.difficulty]||'Misto'}${isUsed?' • JÁ SAIU':''}</span></span></div>`;
+  }).join('')||'<p class="muted">Nenhum desafio disponível.</p>';
+}
+if(syncChannel)syncChannel.onmessage=e=>{if(e.data&&e.data.type==='cubra12-sync')applySyncedSession(e.data.payload)};
+if(syncChannel){
+  const previousSyncHandler=syncChannel.onmessage;
+  syncChannel.onmessage=e=>{
+    if(e.data&&e.data.type==='cubra12-custom-sync'){
+      custom=Array.isArray(e.data.custom)?e.data.custom:[];
+      deleted=new Set(e.data.deleted||[]);
+      localStorage.setItem(DELETED,JSON.stringify([...deleted]));
+      pool=all().filter(q=>chosen.includes(q.topic));
+      renderTeacher();
+      refreshQuestionChoices();
+      return;
+    }
+    if(e.data&&e.data.type==='cubra12-sync')applySyncedSession(e.data.payload);
+  };
+}
+window.addEventListener('storage',e=>{
+  if(e.key===STORAGE&&e.newValue){
+    try{custom=JSON.parse(e.newValue)||[];pool=all().filter(q=>chosen.includes(q.topic));renderTeacher();refreshQuestionChoices()}catch(err){}
+  }
+  if(e.key===DELETED&&e.newValue){
+    try{deleted=new Set(JSON.parse(e.newValue)||[]);pool=all().filter(q=>chosen.includes(q.topic));renderTeacher();refreshQuestionChoices();renderLiveMonitor()}catch(err){}
+  }
+  if(e.key===SYNC_KEY&&e.newValue){try{applySyncedSession(JSON.parse(e.newValue))}catch(err){}}
+});
+
+  function restoreSession(){try{const x=JSON.parse(localStorage.getItem(SESSION)||'null');if(!x||!x.state)return;state=x.state;current=x.current||null;used=new Set(x.used||[]);removed=x.removed||[];deleted=new Set(x.deleted||[...deleted]);owner=x.owner;passed=!!x.passed;continueTeam=!!x.continueTeam;chosen=x.chosen||[];$('seconds').value=x.seconds||30;$('players').value=x.players||6;$('difficulty').value=x.difficulty||'intermediario';(x.topics||[]).forEach(([v,c])=>{const el=[...document.querySelectorAll('.topic-check')].find(z=>z.value===v);if(el)el.checked=c});pool=all().filter(q=>chosen.includes(q.topic));render();refreshQuestionChoices();if(current){$('question').textContent=current.text;$('topic').textContent=current.topic.toUpperCase();$('skipChallenge').disabled=passed;$('answer').disabled=false;$('check').disabled=false;$('draw').disabled=true;$('manualDraw').disabled=true;$('teacherAnswer').textContent='Resposta correta: '+current.answer;$('teacherAnswer').classList.remove('hidden');$('revealAnswer').textContent='🙈 Ocultar resposta';$('feedback').textContent='Partida restaurada. Cronômetro de resolução reiniciado.';startTimer()}else{$('draw').disabled=!state.active;$('manualDraw').disabled=true;if(state.active&&state.round>0){$('draw').disabled=true;$('next').disabled=false;$('next').textContent=continueTeam?'Novo desafio da equipe '+(state.team?'B':'A'):'Próxima equipe'}else{$('next').disabled=true}}}catch(e){}}
+  function restoreSession(){try{const x=JSON.parse(localStorage.getItem(SESSION)||'null');if(!x||!x.state)return;state=x.state;current=x.current||null;used=new Set(x.used||[]);removed=x.removed||[];deleted=new Set(x.deleted||[...deleted]);owner=x.owner;passed=!!x.passed;continueTeam=!!x.continueTeam;chosen=x.chosen||[];$('seconds').value=x.seconds||30;$('players').value=x.players||6;$('difficulty').value=x.difficulty||'intermediario';(x.topics||[]).forEach(([v,c])=>{const el=[...document.querySelectorAll('.topic-check')].find(z=>z.value===v);if(el)el.checked=c});pool=all().filter(q=>chosen.includes(q.topic));render();refreshQuestionChoices();if(current){$('question').textContent=current.text;$('topic').textContent=current.topic.toUpperCase();$('answer').disabled=false;$('check').disabled=false;$('draw').disabled=true;$('manualDraw').disabled=true;$('teacherAnswer').textContent='Resposta correta: '+current.answer;$('teacherAnswer').classList.remove('hidden');$('revealAnswer').textContent='🙈 Ocultar resposta';$('feedback').textContent='Partida restaurada. Cronômetro de resolução reiniciado.';startTimer()}else{$('draw').disabled=!state.active;$('manualDraw').disabled=true;if(state.active&&state.round>0){$('draw').disabled=true;$('next').disabled=false;$('next').textContent=continueTeam?'Novo desafio da equipe '+(state.team?'B':'A'):'Próxima equipe'}else{$('next').disabled=true}}}catch(e){}}
+ function stopResolution(){if(resolutionTimer)clearInterval(resolutionTimer);resolutionTimer=null}
+ function stopChoice(){if(choiceTimer)clearInterval(choiceTimer);choiceTimer=null}
+ function stopClock(){if(clockTimer)clearInterval(clockTimer);clockTimer=null}
+ function showClock(){const m=Math.floor(clockSeconds/60),s=clockSeconds%60;$('clockDisplay').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+ $('clockStart').onclick=()=>{if(!clockTimer)clockTimer=setInterval(()=>{clockSeconds++;showClock()},1000)};
+ $('clockPause').onclick=stopClock;$('clockResume').onclick=()=>$('clockStart').click();
+ $('clockReset').onclick=()=>{stopClock();clockSeconds=0;showClock()};
+ $('teacherToggle').onclick=()=>{const panel=$('teacherPanel');panel.classList.toggle('hidden');$('teacherToggle').textContent=panel.classList.contains('hidden')?'🔒 Área exclusiva do professor':'🔓 Fechar área do professor'};
+  function renderTeacher(){
+   const bank=base.concat(generated,custom).filter(q=>!deleted.has(q.id)),active=all();const activeCustom=custom.filter(q=>!deleted.has(q.id)&&!removed.includes(q.id));$('customCount').textContent=activeCustom.length+' personalizadas • '+removed.length+' retiradas nesta partida • '+deleted.size+' excluídas definitivamente';
+   $('customList').innerHTML=active.map(q=>{const editable=custom.some(x=>x.id===q.id),wasUsed=used.has(q.id);return `<div style="display:flex;gap:8px;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:8px 0;flex-wrap:wrap"><span style="${wasUsed?'text-decoration:line-through;color:#94a3b8':''}"><b>${esc(q.text)}</b> = ${q.answer} <span class="muted">• ${esc(q.topic)} • ${levels[q.difficulty]||'Misto'}${wasUsed?' • UTILIZADA':''}</span></span><span>${editable?`<button class="secondary" data-edit="${q.id}">Editar</button> `:''}<button class="danger" data-del="${q.id}">Retirar da partida</button> <button class="danger" data-perm-del="${q.id}">Excluir definitivamente</button></span></div>`}).join('')||'<p class="muted">Nenhuma questão ativa.</p>';
+   $('allQuestionsTable').querySelector('tbody').innerHTML=bank.map(q=>`<tr style="${used.has(q.id)?'color:#94a3b8;text-decoration:line-through':''}"><td style="padding:8px;border-bottom:1px solid #e2e8f0">${esc(q.text)}${used.has(q.id)?' • utilizada':''}</td><td style="text-align:center;padding:8px">${q.answer}</td><td style="text-align:center;padding:8px">${esc(q.topic)}</td><td style="text-align:center;padding:8px">${levels[q.difficulty]||'Misto'}</td><td style="text-align:center;padding:8px"><button class="secondary" type="button" data-bank-remove="${q.id}">Retirar</button> <button class="danger" type="button" data-bank-del="${q.id}">Excluir</button></td></tr>`).join('');
+   $('removedList').innerHTML=removed.length?removed.map(id=>{const q=bank.find(x=>x.id===id);return q?`<div style="padding:7px;border-bottom:1px solid #e2e8f0">${esc(q.text)} = ${q.answer} <span class="muted">• ${esc(q.topic)} • ${levels[q.difficulty]||'Misto'}</span> <button class="secondary" type="button" data-restore="${q.id}">Restaurar nesta partida</button></div>`:''}).join(''):'Nenhuma questão retirada nesta partida.';
+   const counts=(arr,fn)=>arr.filter(fn).length, rows=[['Total geral',bank.length],...Array.from({length:12},(_,i)=>['Resultado '+(i+1),counts(bank,q=>q.answer===i+1)]),...['facil','intermediario','avancado'].map(k=>['Dificuldade: '+(levels[k]||k),counts(bank,q=>q.difficulty===k)]),...['Adição','Subtração','Multiplicação','Divisão','Potenciação','Radiciação','Frações','Expressões numéricas','Equações do 1º grau','Equações com frações','Equações com mais de uma operação'].map(k=>['Tipo: '+k,counts(bank,q=>q.topic===k)])];
+   $('bankStats').innerHTML='<table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:8px">Informação</th><th style="padding:8px">Quantidade</th></tr></thead><tbody>'+rows.map(r=>`<tr><td style="padding:7px;border-bottom:1px solid #e2e8f0">${r[0]}</td><td style="text-align:center;border-bottom:1px solid #e2e8f0">${r[1]}</td></tr>`).join('')+'</tbody></table>';
+   refreshQuestionChoices();
+  }
+ function resetEditor(){editId=null;$('customQuestion').value='';$('customAnswer').value='';$('saveQuestion').textContent='Salvar questão';$('cancelEdit').style.display='none'}
+ $('saveQuestion').onclick=()=>{
+  const text=$('customQuestion').value.trim(),answer=Number($('customAnswer').value),topic=$('customTopic').value,difficulty=$('customDifficulty').value;
+  if(!text){$('saveStatus').textContent='Informe o enunciado.';return}
+  if(!Number.isInteger(answer)||answer<1||answer>12){$('saveStatus').textContent='A resposta deve ser um inteiro de 1 a 12.';return}
+  if(all().some(q=>norm(q.text)===norm(text)&&q.id!==editId)){$('saveStatus').textContent='Questão duplicada: não foi salva.';return}
+  if(editId){const i=custom.findIndex(q=>q.id===editId);if(i>=0)custom[i]={...custom[i],text,answer,topic,difficulty}}
+  else custom.push({id:'custom-'+Date.now()+'-'+Math.random().toString(36).slice(2),text,answer,topic,difficulty});
+  saveCustom();renderTeacher();resetEditor();$('saveStatus').textContent='Salva neste navegador.';saveSession();
+ };
+ $('cancelEdit').onclick=resetEditor;
+ $('customList').onclick=e=>{
+  const ed=e.target.closest('[data-edit]'),del=e.target.closest('[data-del]'),perm=e.target.closest('[data-perm-del]');
+  if(ed){const q=custom.find(x=>x.id===ed.dataset.edit);if(!q)return;editId=q.id;$('customQuestion').value=q.text;$('customAnswer').value=q.answer;$('customTopic').value=q.topic;$('customDifficulty').value=q.difficulty;$('saveQuestion').textContent='Atualizar questão';$('cancelEdit').style.display='inline-block'}
+  if(del){const id=del.dataset.del,q=all().find(x=>x.id===id);if(q&&confirm('Retirar este desafio apenas da partida atual? Ele poderá ser restaurado depois.')){removed.push(id);saveSession();renderTeacher();refreshQuestionChoices();if(editId===id)resetEditor()}}
+  if(perm){const id=perm.dataset.permDel,q=base.concat(generated,custom).find(x=>x.id===id);if(q&&confirm('Excluir definitivamente este desafio do banco de questões? Ele não aparecerá mais nesta partida nem nas próximas neste navegador.')){removed=removed.filter(x=>x!==id);deleted.add(id);custom=custom.filter(x=>x.id!==id);saveCustom();saveSession();renderTeacher();refreshQuestionChoices();if(editId===id)resetEditor()}}
+ };
+ $('removedList').onclick=e=>{const restore=e.target.closest('[data-restore]');if(!restore)return;const id=restore.dataset.restore;if(!deleted.has(id)){removed=removed.filter(x=>x!==id);saveSession();renderTeacher();refreshQuestionChoices()}};
+ $('allQuestionsTable').onclick=e=>{const remove=e.target.closest('[data-bank-remove]'),del=e.target.closest('[data-bank-del]');
+  if(remove){const id=remove.dataset.bankRemove,q=base.concat(generated,custom).find(x=>x.id===id);if(q&&!deleted.has(id)&&!removed.includes(id)&&confirm('Retirar este desafio apenas da partida atual? Ele poderá ser restaurado depois.')){removed.push(id);saveSession();renderTeacher();refreshQuestionChoices()};return}
+  if(del){const id=del.dataset.bankDel,q=base.concat(generated,custom).find(x=>x.id===id);if(q&&confirm('Excluir definitivamente este desafio do banco de questões?')){removed=removed.filter(x=>x!==id);deleted.add(id);custom=custom.filter(x=>x.id!==id);saveCustom();saveSession();renderTeacher();refreshQuestionChoices()}}
+ };
+ function manualOptions(){const manual=$('topicMode').value==='manual';$('manualTopicWrap').style.display=manual?'block':'none';$('manualTopic').innerHTML=chosen.map(t=>`<option>${esc(t)}</option>`).join('')}
+ function missing(team){return Array.from({length:12},(_,i)=>i+1).filter(n=>!state.covered[team].includes(n))}
+ function board(id,t,rev){const el=$(id);el.innerHTML='';Array.from({length:12},(_,i)=>rev?12-i:i+1).forEach(num=>{const c=document.createElement('div');c.className='number'+(state&&state.covered[t].includes(num)?' covered':'');c.textContent=num;el.appendChild(c)})}
+ function render(){if(!state)return;board('boardA',0,false);board('boardB',1,true);$('aRemaining').textContent=state.remaining[0]+' ativos';$('bRemaining').textContent=state.remaining[1]+' ativos';$('scoreA').textContent=state.remaining[0];$('scoreB').textContent=state.remaining[1];$('outA').textContent='Eliminados: '+state.out[0];$('outB').textContent='Eliminados: '+state.out[1];$('hitsA').textContent='Acertos: '+state.hits[0];$('hitsB').textContent='Acertos: '+state.hits[1];$('advA').textContent='Vantagem: '+state.advantage[0];$('advB').textContent='Vantagem: '+state.advantage[1];$('turnLabel').textContent=state.active?'Vez: Equipe '+(state.team?'B':'A')+(state.final?' • FINAL':''):'Partida encerrada';$('roundLabel').textContent='Rodada '+state.round}
+ function beginChoice(){stopChoice();$('timer').textContent='Aguardando seleção do professor ou sorteio automático.';refreshQuestionChoices()}
+ function startGame(){
+  chosen=[...document.querySelectorAll('.topic-check:checked')].map(x=>x.value);if(!chosen.length){alert('Selecione ao menos um conteúdo.');return}
+  const difficulty=$('difficulty').value;pool=all().filter(q=>chosen.includes(q.topic)&&(difficulty==='misto'||q.difficulty===difficulty));
+  if(!pool.length){alert('Não há questões para os filtros escolhidos.');return}
+  const n=Math.max(2,Math.min(60,parseInt($('players').value)||6));$('players').value=n;
+  state={active:true,n,remaining:[n,n],out:[0,0],covered:[[],[]],hits:[0,0],advantage:[0,0],team:Math.random()<.5?0:1,final:false,round:0,keep:$('keepTeam').checked,challengeHistory:[]};
+  used=new Set();removed=[];current=null;owner=null;passed=false;continueTeam=false;stopResolution();stopChoice();stopClock();clockSeconds=0;showClock();render();
+  $('draw').disabled=false;$('manualDraw').disabled=true;$('check').disabled=true;$('next').disabled=true;$('answer').disabled=true;$('answer').value='';$('winner').textContent='';$('question').textContent='Clique em “Sortear desafio”.';$('topic').textContent='PREPARADOS?';$('feedback').className='feedback';$('feedback').textContent='Partida iniciada! Boa sorte às equipes.';$('timer').textContent='';manualOptions();beginChoice();saveSession();renderTeacher();const partida=window.open('cubra12_arquivo2_conectado.html','cubra12_partida');if(!partida){alert('O navegador bloqueou a nova janela. Permita pop-ups para este arquivo para abrir a partida ao lado.');}
+ }
+  function refreshQuestionChoices(){
+   const sel=$('manualQuestion');if(!sel)return;const prior=sel.value,miss=state?missing(state.team):Array.from({length:12},(_,i)=>i+1);
+   const search=norm(($('manualSearch')||{}).value||'');
+   const order=($('manualSort')||{}).value||'nivel-asc';
+   const rank={facil:1,intermediario:2,avancado:3};
+   let opts=all().filter(q=>!used.has(q.id)&&chosen.includes(q.topic)&&miss.includes(q.answer)&&!(state&&state.covered[state.team].includes(q.answer)));
+   if(search)opts=opts.filter(q=>norm(`${q.text} ${q.topic} ${q.answer} ${levels[q.difficulty]||''}`).includes(search));
+   opts.sort((a,b)=>{
+     if(order==='resultado')return a.answer-b.answer||a.text.localeCompare(b.text,'pt-BR');
+     if(order==='texto')return a.text.localeCompare(b.text,'pt-BR');
+     const d=(rank[a.difficulty]||9)-(rank[b.difficulty]||9);
+     return (order==='nivel-desc'?-d:d)||a.answer-b.answer||a.text.localeCompare(b.text,'pt-BR');
+   });
+   sel.innerHTML='<option value="">Seleção automática</option>'+opts.map(q=>`<option value="${q.id}">[${levels[q.difficulty]||'Misto'} • resultado ${q.answer} • ${esc(q.topic)}] ${esc(q.text)}</option>`).join('');if(opts.some(q=>q.id===prior))sel.value=prior;
+   $('manualDraw').disabled=!(state&&state.active&&!current&&sel.value);
+  }
+  function choose(manualId=null){
+   let c=pool.filter(q=>!used.has(q.id));if($('topicMode').value==='manual')c=c.filter(q=>q.topic===$('manualTopic').value);
+   const miss=missing(state.team),final=state.remaining[0]===1&&state.remaining[1]===1;
+   // Dados são sorteados somente como brincadeira: não influenciam resposta,
+   // resultado, seleção da questão ou dificuldade.
+   const die1=Math.floor(Math.random()*6)+1,die2=Math.floor(Math.random()*6)+1;
+   const coveredCount=state.covered[state.team].length;
+   const level=coveredCount<4?'facil':coveredCount<8?'intermediario':'avancado';
+   if(manualId){c=c.filter(q=>q.id===manualId)}else{
+    const globalDiff=$('difficulty').value;
+    c=c.filter(q=>globalDiff==='misto'||q.difficulty===globalDiff);
+    const byLevel=c.filter(q=>q.difficulty===level);
+    if(byLevel.length)c=byLevel;
+    if(final||miss.length===1){const target=miss.length===1?miss[0]:null;let advanced=c.filter(q=>q.difficulty==='avancado'&&(target===null||q.answer===target));c=advanced.length?advanced:c.filter(q=>target===null||q.answer===target)}
+    else{const preferred=c.filter(q=>miss.includes(q.answer));if(preferred.length)c=preferred}
+   }
+   c=c.filter(q=>miss.includes(q.answer)&&!state.covered[state.team].includes(q.answer));
+   if(!c.length){alert('Não há desafios inéditos para os números disponíveis com os filtros atuais. Ajuste os conteúdos ou o nível.');return null}
+   return {question:manualId?c[0]:c[Math.floor(Math.random()*c.length)],die1,die2,level};
+  }
+ function startTimer(){stopResolution();left=Math.max(0,Number($('seconds').value)||0);if(!left){$('timer').textContent='Sem limite de tempo.';return}$('timer').textContent='Tempo de resolução: '+left+' s';resolutionTimer=setInterval(()=>{left--;$('timer').textContent='Tempo de resolução: '+left+' s';if(left<=0){stopResolution();if($('autoTimeout').checked)wrong('Tempo esgotado!');else $('timer').textContent='Tempo encerrado. Professor, avalie a resposta.'}},1000)}
+  function presentQuestion(manualId=null){
+   if(!state?.active||current)return;stopChoice();const picked=choose(manualId);if(!picked)return;const q=picked.question;current=q;used.add(q.id);state.round++;owner=state.team;passed=false;
+   state.challengeHistory=state.challengeHistory||[];
+   state.challengeHistory.push({id:q.id,round:state.round,team:state.team,topic:q.topic,text:q.text,answer:q.answer,status:'em andamento',time:new Date().toISOString()});
+   const f=['⚀','⚁','⚂','⚃','⚄','⚅'];$('die1').textContent=f[picked.die1-1];$('die2').textContent=f[picked.die2-1];
+   $('topic').textContent=q.topic.toUpperCase();$('question').textContent=q.text;$('feedback').className='feedback';$('feedback').textContent='Resolva e informe apenas o resultado numérico.';$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('draw').disabled=true;$('manualDraw').disabled=true;$('skipChallenge').disabled=passed;$('next').disabled=true;$('questionHint').textContent='Resolva o desafio e informe o resultado.';$('answer').focus();$('timer').textContent='Tempo de resolução conforme configuração do professor.';startTimer();renderTeacher();saveSession();
+  }
+  function draw(){presentQuestion(null)}
+ function skipChallenge(){
+  if(!current||!state?.active||passed)return;
+  const skipped=current;
+  finalizeHistory('pulada');
+  stopResolution();
+  current=null;
+  owner=null;
+  // A skipped question is not counted as a completed round, but stays marked as used
+  // so the same challenge is not immediately drawn again.
+  state.round=Math.max(0,state.round-1);
+  $('skipChallenge').disabled=true;
+  $('answer').value='';
+  $('answer').disabled=true;
+  $('check').disabled=true;
+  $('next').disabled=true;
+  $('draw').disabled=false;
+  $('manualDraw').disabled=true;
+  $('topic').textContent='DESAFIO PULADO';
+  $('question').textContent='Este desafio foi pulado. A mesma equipe pode receber outro.';
+  $('questionHint').textContent='Nenhum ponto, eliminação ou resultado foi alterado.';
+  $('timer').textContent='';
+  $('feedback').className='feedback';
+  $('feedback').textContent='Desafio pulado pela equipe '+(state.team?'B':'A')+'. Sorteie um novo desafio para continuar.';
+  render();
+  refreshQuestionChoices();
+  renderTeacher();
+  saveSession();
+ }
+ function finish(){state.active=false;stopResolution();stopChoice();$('skipChallenge').disabled=true;$('draw').disabled=true;$('check').disabled=true;$('next').disabled=true;const winner=state.covered[0].length===12?0:state.covered[1].length===12?1:-1;const msg=winner>=0?'Equipe '+(winner?'B':'A')+' completou o tabuleiro!':state.remaining[0]===0?'Equipe B venceu: Equipe A sem participantes.':state.remaining[1]===0?'Equipe A venceu: Equipe B sem participantes.':'Partida encerrada.';$('winner').textContent='🏆 '+msg;$('turnLabel').textContent='Fim de jogo';$('feedback').textContent=msg+' Acertos: A '+state.hits[0]+' • B '+state.hits[1]+'.';saveSession()}
+ function finalizeHistory(status){
+  if(!state)return;
+  state.challengeHistory=state.challengeHistory||[];
+  const last=[...state.challengeHistory].reverse().find(h=>current&&h.id===current.id&&h.status==='em andamento');
+  if(last)last.status=status;
+}
+ function endChallenge(message,good=false){finalizeHistory(good?'utilizado':'encerrado');stopResolution();current=null;owner=null;passed=false;$('skipChallenge').disabled=true;$('answer').disabled=true;$('check').disabled=true;$('draw').disabled=true;$('feedback').className='feedback'+(good?' good':' bad');$('feedback').textContent=message;render();saveSession();if(state.remaining[0]===0||state.remaining[1]===0||state.covered[0].length===12||state.covered[1].length===12){finish();return}if(state.remaining[0]===1&&state.remaining[1]===1&&!state.final){state.final=true;$('winner').textContent='⚡ GRANDE FINAL: restou um participante em cada equipe!';render()}$('next').disabled=false;$('next').textContent=continueTeam?'Novo desafio da equipe '+(state.team?'B':'A'):'Próxima equipe'}
+ function wrong(reason){
+  if(!current||!state?.active)return;stopResolution();
+  if(!passed){state.remaining[owner]=Math.max(0,state.remaining[owner]-1);state.out[owner]++;passed=true;state.team=1-owner;continueTeam=true;$('feedback').className='feedback bad';$('feedback').textContent=reason+' Participante da equipe '+(owner?'B':'A')+' eliminado. Repasse da MESMA questão para a equipe '+(state.team?'B':'A')+'.';$('turnLabel').textContent='Repasse: Equipe '+(state.team?'B':'A');$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('draw').disabled=true;$('skipChallenge').disabled=true;$('next').disabled=true;$('questionHint').textContent='No repasse, a equipe não é eliminada se errar.';render();saveSession();startTimer();$('answer').focus();return}
+  continueTeam=true;endChallenge(reason+' A equipe que recebeu o repasse não foi eliminada. Ela continuará com um novo desafio inédito.',false);
+ }
+ function check(){
+  if(!current||!state?.active)return;const raw=$('answer').value.trim();if(!raw){$('feedback').textContent='Digite sua resposta antes de conferir.';return}
+  const ans=Number(raw),team=state.team;
+  if(Number.isInteger(ans)&&ans>=1&&ans<=12&&ans===current.answer){
+   stopResolution();
+   if(state.covered[team].includes(ans)){
+    if(passed){state.advantage[team]++;state.hits[team]++;continueTeam=true;endChallenge('Resposta correta no repasse! Número já preenchido: ponto de vantagem para a Equipe '+(team?'B':'A')+'.',true)}
+    else wrong('Resultado já preenchido no tabuleiro.');
+    return;
+   }
+   state.covered[team].push(ans);state.hits[team]++;
+   if(passed){continueTeam=true;endChallenge('Resposta correta no repasse! Número '+ans+' coberto. A equipe continuará com novo desafio.',true)}
+   else{continueTeam=false;endChallenge('Resposta correta! Número '+ans+' coberto pela Equipe '+(team?'B':'A')+'.',true)}
+  }else wrong('Resposta incorreta.');
+ }
+ function next(){if(!state?.active)return;if(!continueTeam&&!state.keep)state.team=1-state.team;$('next').disabled=true;$('next').textContent='Próxima equipe';$('draw').disabled=false;$('manualDraw').disabled=true;$('question').textContent='Pronto para o próximo desafio?';$('topic').textContent='NOVO DESAFIO';$('questionHint').textContent='Resolva o desafio e informe o resultado.';$('die1').textContent='⚀';$('die2').textContent='⚁';$('timer').textContent='';$('feedback').className='feedback';$('feedback').textContent='Agora é a vez da Equipe '+(state.team?'B':'A')+'.';render();beginChoice();refreshQuestionChoices();saveSession()}
+ $('start').onclick=startGame;$('draw').onclick=draw;$('skipChallenge').onclick=skipChallenge;
+  $('manualQuestion').onchange=refreshQuestionChoices;if($('manualSearch'))$('manualSearch').oninput=refreshQuestionChoices;if($('manualSort'))$('manualSort').onchange=refreshQuestionChoices;$('manualDraw').onclick=()=>presentQuestion($('manualQuestion').value);
+ $('check').onclick=check;$('next').onclick=next;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('check').disabled)check()});$('topicMode').onchange=manualOptions;$('players').max=60;
+ window.addEventListener('beforeunload',()=>{stopResolution();stopChoice();stopClock()});
+ renderTeacher();board('boardA',0,false);board('boardB',1,true);showClock();renderLiveMonitor();restoreSession();
+})();
+</script>
+</body>
+</html>
